@@ -21,6 +21,7 @@ use stdweb::web::html_element::CanvasElement;
 use stdweb::web::{
     document, EventListenerHandle, IChildNode, IElement, IEventTarget, IHtmlElement,
 };
+use stdweb::console;
 
 pub struct Canvas {
     /// Note: resizing the CanvasElement should go through `backend::set_canvas_size` to ensure the DPI factor is maintained.
@@ -248,7 +249,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
-            println!("Touch end triggered");
+            console!(log, "Touch end triggered");
             for touch in event.changed_touches() {
 
                 let rect = canvas.get_bounding_client_rect();
@@ -272,7 +273,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_start = Some(self.add_event(move |event: TouchStart| {
-            println!("Touch start triggered");
+            console!(log, "Touch start triggered");
             for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
@@ -295,7 +296,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_cancel = Some(self.add_event(move |event: TouchCancel| {
-            println!("Touch cancel triggered");
+            console!(log, "Touch cancel triggered");
             for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
@@ -319,7 +320,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_move = Some(self.add_event(move |event: TouchMove| {
-            println!("Touch move triggered");
+            console!(log, "Touch move triggered");
             for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
