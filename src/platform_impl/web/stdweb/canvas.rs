@@ -238,45 +238,15 @@ impl Canvas {
             }
         }));
     }
-/*
-    pub fn on_touch_start<F>(&mut self, mut handler: F)
-        where
-            F: 'static + FnMut(i32, PhysicalPosition<f64>, ModifiersState),
-    {
-        // todo
-        self.on_cursor_move = Some(self.add_event(move |event: ITouchEvent| {
-            handler(
-                event.target().
-                event.pointer_id(),
-                event::mouse_position(&event).to_physical(super::scale_factor()),
-                event::mouse_modifiers(&event),
-            );
-        }));
-    }
 
-    pub fn on_touch_move<F>(&mut self, mut handler: F)
-        where
-            F: 'static + FnMut(i32, PhysicalPosition<f64>, ModifiersState),
-    {
-        // todo
-        self.on_cursor_move = Some(self.add_event(move |event: TouchMove| {
-            handler(
-                event.pointer_id(),
-                event::mouse_position(&event).to_physical(super::scale_factor()),
-                event::mouse_modifiers(&event),
-            );
-        }));
-    }
-    |surface_id, phase, location, touch_id|
-*/
     pub fn on_touch_end<F>(&mut self, mut handler: F)
         where
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
     {
-        // todo
+        let canvas = self.raw.clone();
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
             for touch in event.touches() {
-                let rect = self.raw().get_bounding_client_rect();
+                let rect = canvas.get_bounding_client_rect();
                 handler(
                     1,
                     TouchPhase::Ended,
@@ -294,15 +264,16 @@ impl Canvas {
         where
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
     {
-        // todo
+        let canvas = self.raw.clone();
         self.on_touch_start = Some(self.add_event(move |event: TouchStart| {
             for touch in event.touches() {
+                let rect = canvas.get_bounding_client_rect();
                 handler(
                     1,
                     TouchPhase::Started,
                     LogicalPosition {
-                        x: touch.page_x() as f64,
-                        y: touch.page_y() as f64,
+                        x: touch.page_x() as f64 - rect.get_x(),
+                        y: touch.page_y() as f64 - rect.get_y(),
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
@@ -314,16 +285,16 @@ impl Canvas {
         where
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
     {
-        // todo
+        let canvas = self.raw.clone();
         self.on_touch_move = Some(self.add_event(move |event: TouchMove| {
             for touch in event.touches() {
-
+                let rect = canvas.get_bounding_client_rect();
                 handler(
                     1,
                     TouchPhase::Moved,
                     LogicalPosition {
-                        x: touch.page_x() as f64,
-                        y: touch.page_y() as f64,
+                        x: touch.page_x() as f64 - rect.get_x(),
+                        y: touch.page_y() as f64 - rect.get_y(),
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
