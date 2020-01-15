@@ -247,7 +247,7 @@ impl Canvas {
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
             for touch in event.touches() {
                 let rect = canvas.get_bounding_client_rect();
-                let (left, right) = (canvas.scroll_left(), canvas.scroll_top());
+                let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
                     1,
                     TouchPhase::Ended,
@@ -269,7 +269,7 @@ impl Canvas {
         self.on_touch_start = Some(self.add_event(move |event: TouchStart| {
             for touch in event.touches() {
                 let rect = canvas.get_bounding_client_rect();
-                let (left, right) = (canvas.scroll_left(), canvas.scroll_top());
+                let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
                     1,
                     TouchPhase::Started,
@@ -291,13 +291,13 @@ impl Canvas {
         self.on_touch_move = Some(self.add_event(move |event: TouchMove| {
             for touch in event.touches() {
                 let rect = canvas.get_bounding_client_rect();
-                let (left, right) = (canvas.scroll_left(), canvas.scroll_top());
+                let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
                     1,
                     TouchPhase::Moved,
                     LogicalPosition {
-                        x: touch.page_x() as f64 - rect.get_x() + left as f64 ,
-                        y: touch.page_y() as f64 - rect.get_y() + right as f64,
+                        x: touch.page_x() as f64 - rect.get_x() - left as f64 ,
+                        y: touch.page_y() as f64 - rect.get_y() - right as f64,
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
