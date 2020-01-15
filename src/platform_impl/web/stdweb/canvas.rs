@@ -276,12 +276,13 @@ impl Canvas {
         // todo
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
             for touch in event.touches() {
+                let rect = self.raw().get_bounding_client_rect();
                 handler(
                     1,
                     TouchPhase::Ended,
                     LogicalPosition {
-                        x: touch.page_x() as f64,
-                        y: touch.page_y() as f64,
+                        x: touch.page_x() as f64 - rect.get_x(),
+                        y: touch.page_y() as f64 - rect.get_y(),
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
