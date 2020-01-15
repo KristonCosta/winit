@@ -275,7 +275,7 @@ impl Canvas {
     {
         // todo
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.changedTouches() {
+            for touch in event.touches() {
                 handler(
                     1,
                     TouchPhase::Ended,
@@ -294,8 +294,8 @@ impl Canvas {
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
     {
         // todo
-        self.on_touch_start = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.changedTouches() {
+        self.on_touch_start = Some(self.add_event(move |event: TouchStart| {
+            for touch in event.touches() {
                 handler(
                     1,
                     TouchPhase::Started,
@@ -314,8 +314,8 @@ impl Canvas {
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
     {
         // todo
-        self.on_touch_move = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.changedTouches() {
+        self.on_touch_move = Some(self.add_event(move |event: TouchMove| {
+            for touch in event.touches() {
 
                 handler(
                     1,
