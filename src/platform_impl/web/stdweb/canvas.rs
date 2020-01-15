@@ -245,7 +245,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.touches() {
+            for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
@@ -267,7 +267,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_start = Some(self.add_event(move |event: TouchStart| {
-            for touch in event.touches() {
+            for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
@@ -289,7 +289,7 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_move = Some(self.add_event(move |event: TouchMove| {
-            for touch in event.touches() {
+            for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
