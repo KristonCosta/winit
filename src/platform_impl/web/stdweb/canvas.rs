@@ -15,7 +15,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use stdweb::traits::IPointerEvent;
 use stdweb::unstable::TryInto;
-use stdweb::web::event::{BlurEvent, ConcreteEvent, FocusEvent, FullscreenChangeEvent, KeyDownEvent, KeyPressEvent, KeyUpEvent, MouseWheelEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerUpEvent, TouchStart, TouchEnd, TouchMove, TouchCancel, ITouchEvent};
+use stdweb::web::event::{BlurEvent, ConcreteEvent, FocusEvent, FullscreenChangeEvent, KeyDownEvent, KeyPressEvent, KeyUpEvent, MouseWheelEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerUpEvent,
+                         TouchStart, TouchEnd, TouchMove, TouchCancel, TouchLeave, ITouchEvent};
 use stdweb::web::html_element::CanvasElement;
 use stdweb::web::{
     document, EventListenerHandle, IChildNode, IElement, IEventTarget, IHtmlElement,
@@ -292,7 +293,7 @@ impl Canvas {
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
     {
         let canvas = self.raw.clone();
-        self.on_touch_start = Some(self.add_event(move |event: TouchCancel| {
+        self.on_touch_cancel = Some(self.add_event(move |event: TouchCancel| {
             for touch in event.changed_touches() {
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
@@ -309,6 +310,7 @@ impl Canvas {
 
         }));
     }
+
     pub fn on_touch_move<F>(&mut self, mut handler: F)
         where
             F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
