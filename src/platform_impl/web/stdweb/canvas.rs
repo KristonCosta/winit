@@ -1,18 +1,21 @@
 use super::event;
 use crate::dpi::{LogicalPosition, PhysicalPosition, PhysicalSize};
 use crate::error::OsError as RootOE;
-use crate::event::{ModifiersState, MouseButton, MouseScrollDelta, ScanCode, VirtualKeyCode};
+use crate::event::{
+    ModifiersState,
+    MouseButton,
+    MouseScrollDelta,
+    ScanCode,
+    VirtualKeyCode,
+    Touch,
+    TouchPhase};
 use crate::platform_impl::OsError;
 
 use std::cell::RefCell;
 use std::rc::Rc;
 use stdweb::traits::IPointerEvent;
 use stdweb::unstable::TryInto;
-use stdweb::web::event::{
-    BlurEvent, ConcreteEvent, FocusEvent, FullscreenChangeEvent, KeyDownEvent, KeyPressEvent,
-    KeyUpEvent, MouseWheelEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent,
-    PointerOverEvent, PointerUpEvent,
-};
+use stdweb::web::event::{BlurEvent, ConcreteEvent, FocusEvent, FullscreenChangeEvent, KeyDownEvent, KeyPressEvent, KeyUpEvent, MouseWheelEvent, PointerDownEvent, PointerMoveEvent, PointerOutEvent, PointerOverEvent, PointerUpEvent, TouchStart, TouchEnd, TouchMove, TouchCancel, ITouchEvent};
 use stdweb::web::html_element::CanvasElement;
 use stdweb::web::{
     document, EventListenerHandle, IChildNode, IElement, IEventTarget, IHtmlElement,
@@ -32,6 +35,7 @@ pub struct Canvas {
     on_mouse_press: Option<EventListenerHandle>,
     on_mouse_release: Option<EventListenerHandle>,
     on_mouse_wheel: Option<EventListenerHandle>,
+    on_touch_end: Option<EventListenerHandle>,
     on_fullscreen_change: Option<EventListenerHandle>,
     wants_fullscreen: Rc<RefCell<bool>>,
 }
@@ -73,6 +77,7 @@ impl Canvas {
             on_mouse_press: None,
             on_mouse_wheel: None,
             on_fullscreen_change: None,
+            on_touch_end: None,
             wants_fullscreen: Rc::new(RefCell::new(false)),
         })
     }
@@ -227,6 +232,57 @@ impl Canvas {
             if let Some(delta) = event::mouse_scroll_delta(&event) {
                 handler(0, delta, event::mouse_modifiers(&event));
             }
+        }));
+    }
+/*
+    pub fn on_touch_start<F>(&mut self, mut handler: F)
+        where
+            F: 'static + FnMut(i32, PhysicalPosition<f64>, ModifiersState),
+    {
+        // todo
+        self.on_cursor_move = Some(self.add_event(move |event: ITouchEvent| {
+            handler(
+                event.target().
+                event.pointer_id(),
+                event::mouse_position(&event).to_physical(super::scale_factor()),
+                event::mouse_modifiers(&event),
+            );
+        }));
+    }
+
+    pub fn on_touch_move<F>(&mut self, mut handler: F)
+        where
+            F: 'static + FnMut(i32, PhysicalPosition<f64>, ModifiersState),
+    {
+        // todo
+        self.on_cursor_move = Some(self.add_event(move |event: TouchMove| {
+            handler(
+                event.pointer_id(),
+                event::mouse_position(&event).to_physical(super::scale_factor()),
+                event::mouse_modifiers(&event),
+            );
+        }));
+    }
+    |surface_id, phase, location, touch_id|
+*/
+    pub fn on_touch_end<F>(&mut self, mut handler: F)
+        where
+            F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
+    {
+        // todo
+        self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
+            for touch in event.touches() {
+                handler(
+                    1,
+                    TouchPhase::Ended,
+                    LogicalPosition {
+                        x: touch.page_x() as f64,
+                        y: touch.page_y() as f64,
+                    }.to_physical(super::scale_factor()),
+                    touch.identifier() as u64,
+                );
+            }
+
         }));
     }
 

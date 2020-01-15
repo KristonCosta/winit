@@ -1,6 +1,8 @@
 use super::{backend, device, proxy::Proxy, runner, window};
 use crate::dpi::{PhysicalSize, Size};
-use crate::event::{DeviceId, ElementState, Event, KeyboardInput, TouchPhase, WindowEvent};
+use crate::event::{DeviceId, ElementState, Event,
+                   KeyboardInput, TouchPhase, WindowEvent,
+                   Touch};
 use crate::event_loop::ControlFlow;
 use crate::window::WindowId;
 use std::clone::Clone;
@@ -168,6 +170,20 @@ impl<T> WindowTarget<T> {
                     modifiers,
                 },
             });
+        });
+
+        let runner = self.runner.clone();
+        canvas.on_touch_end(move |surface_id, phase, location, touch_id| {
+            runner.send_event(Event::WindowEvent {
+                window_id: WindowId(id),
+                event: WindowEvent::Touch( Touch {
+                    device_id: DeviceId(device::Id(surface_id)),
+                    phase,
+                    location,
+                    force: None,
+                    id: touch_id,
+                })
+            })
         });
 
         let runner = self.runner.clone();
