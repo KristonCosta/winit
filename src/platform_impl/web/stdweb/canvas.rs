@@ -253,7 +253,7 @@ impl Canvas {
                     TouchPhase::Ended,
                     LogicalPosition {
                         x: touch.page_x() as f64 - rect.get_x() + left as f64 ,
-                        y: touch.page_y() as f64 - rect.get_y() + right as f64,
+                        y: touch.page_y() as f64 - rect.get_y() + top as f64,
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
@@ -275,7 +275,7 @@ impl Canvas {
                     TouchPhase::Started,
                     LogicalPosition {
                         x: touch.page_x() as f64 - rect.get_x() + left as f64 ,
-                        y: touch.page_y() as f64 - rect.get_y() + right as f64,
+                        y: touch.page_y() as f64 - rect.get_y() + top as f64,
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
@@ -297,7 +297,7 @@ impl Canvas {
                     TouchPhase::Moved,
                     LogicalPosition {
                         x: touch.page_x() as f64 - rect.get_x() - left as f64 ,
-                        y: touch.page_y() as f64 - rect.get_y() - right as f64,
+                        y: touch.page_y() as f64 - rect.get_y() - top as f64,
                     }.to_physical(super::scale_factor()),
                     touch.identifier() as u64,
                 );
