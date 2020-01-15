@@ -38,6 +38,7 @@ pub struct Canvas {
     on_touch_start: Option<EventListenerHandle>,
     on_touch_move: Option<EventListenerHandle>,
     on_touch_end: Option<EventListenerHandle>,
+    on_touch_cancel: Option<EventListenerHandle>,
     on_fullscreen_change: Option<EventListenerHandle>,
     wants_fullscreen: Rc<RefCell<bool>>,
 }
@@ -82,6 +83,7 @@ impl Canvas {
             on_touch_start: None,
             on_touch_move: None,
             on_touch_end: None,
+            on_touch_cancel: None,
             wants_fullscreen: Rc::new(RefCell::new(false)),
         })
     }
@@ -275,6 +277,28 @@ impl Canvas {
                 handler(
                     1,
                     TouchPhase::Started,
+                    LogicalPosition {
+                        x: touch.client_x() as f64 - rect.get_x() - left as f64 ,
+                        y: touch.client_y() as f64 - rect.get_y() - top as f64,
+                    }.to_physical(super::scale_factor()),
+                    touch.identifier() as u64,
+                );
+            }
+
+        }));
+    }
+    pub fn on_touch_cancel<F>(&mut self, mut handler: F)
+        where
+            F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
+    {
+        let canvas = self.raw.clone();
+        self.on_touch_start = Some(self.add_event(move |event: TouchCancel| {
+            for touch in event.changed_touches() {
+                let rect = canvas.get_bounding_client_rect();
+                let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
+                handler(
+                    1,
+                    TouchPhase::Ended,
                     LogicalPosition {
                         x: touch.client_x() as f64 - rect.get_x() - left as f64 ,
                         y: touch.client_y() as f64 - rect.get_y() - top as f64,
