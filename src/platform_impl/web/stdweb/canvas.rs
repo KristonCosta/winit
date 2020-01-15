@@ -251,7 +251,7 @@ impl Canvas {
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
             console!(log, "Touch end triggered");
             console!(log, event.changed_touches());
-            console!(log, event.touches());
+            console!(log, event);
             for touch in event.changed_touches() {
 
                 let rect = canvas.get_bounding_client_rect();
