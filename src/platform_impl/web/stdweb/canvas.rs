@@ -275,7 +275,7 @@ impl Canvas {
     {
         // todo
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.touches() {
+            for touch in event.changedTouches() {
                 handler(
                     1,
                     TouchPhase::Ended,
@@ -295,7 +295,7 @@ impl Canvas {
     {
         // todo
         self.on_touch_start = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.touches() {
+            for touch in event.changedTouches() {
                 handler(
                     1,
                     TouchPhase::Started,
@@ -315,7 +315,8 @@ impl Canvas {
     {
         // todo
         self.on_touch_move = Some(self.add_event(move |event: TouchEnd| {
-            for touch in event.touches() {
+            for touch in event.changedTouches() {
+
                 handler(
                     1,
                     TouchPhase::Moved,
