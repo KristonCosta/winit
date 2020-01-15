@@ -187,6 +187,34 @@ impl<T> WindowTarget<T> {
         });
 
         let runner = self.runner.clone();
+        canvas.on_touch_start(move |surface_id, phase, location, touch_id| {
+            runner.send_event(Event::WindowEvent {
+                window_id: WindowId(id),
+                event: WindowEvent::Touch( Touch {
+                    device_id: DeviceId(device::Id(surface_id)),
+                    phase,
+                    location,
+                    force: None,
+                    id: touch_id,
+                })
+            })
+        });
+
+        let runner = self.runner.clone();
+        canvas.on_touch_move(move |surface_id, phase, location, touch_id| {
+            runner.send_event(Event::WindowEvent {
+                window_id: WindowId(id),
+                event: WindowEvent::Touch( Touch {
+                    device_id: DeviceId(device::Id(surface_id)),
+                    phase,
+                    location,
+                    force: None,
+                    id: touch_id,
+                })
+            })
+        });
+
+        let runner = self.runner.clone();
         let raw = canvas.raw().clone();
 
         // The size to restore to after exiting fullscreen.

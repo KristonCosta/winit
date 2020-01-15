@@ -35,6 +35,8 @@ pub struct Canvas {
     on_mouse_press: Option<EventListenerHandle>,
     on_mouse_release: Option<EventListenerHandle>,
     on_mouse_wheel: Option<EventListenerHandle>,
+    on_touch_start: Option<EventListenerHandle>,
+    on_touch_move: Option<EventListenerHandle>,
     on_touch_end: Option<EventListenerHandle>,
     on_fullscreen_change: Option<EventListenerHandle>,
     wants_fullscreen: Rc<RefCell<bool>>,
@@ -77,6 +79,8 @@ impl Canvas {
             on_mouse_press: None,
             on_mouse_wheel: None,
             on_fullscreen_change: None,
+            on_touch_start: None,
+            on_touch_move: None,
             on_touch_end: None,
             wants_fullscreen: Rc::new(RefCell::new(false)),
         })
@@ -275,6 +279,46 @@ impl Canvas {
                 handler(
                     1,
                     TouchPhase::Ended,
+                    LogicalPosition {
+                        x: touch.page_x() as f64,
+                        y: touch.page_y() as f64,
+                    }.to_physical(super::scale_factor()),
+                    touch.identifier() as u64,
+                );
+            }
+
+        }));
+    }
+    pub fn on_touch_start<F>(&mut self, mut handler: F)
+        where
+            F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
+    {
+        // todo
+        self.on_touch_start = Some(self.add_event(move |event: TouchEnd| {
+            for touch in event.touches() {
+                handler(
+                    1,
+                    TouchPhase::Started,
+                    LogicalPosition {
+                        x: touch.page_x() as f64,
+                        y: touch.page_y() as f64,
+                    }.to_physical(super::scale_factor()),
+                    touch.identifier() as u64,
+                );
+            }
+
+        }));
+    }
+    pub fn on_touch_move<F>(&mut self, mut handler: F)
+        where
+            F: 'static + FnMut(i32, TouchPhase, PhysicalPosition<f64>, u64),
+    {
+        // todo
+        self.on_touch_move = Some(self.add_event(move |event: TouchEnd| {
+            for touch in event.touches() {
+                handler(
+                    1,
+                    TouchPhase::Moved,
                     LogicalPosition {
                         x: touch.page_x() as f64,
                         y: touch.page_y() as f64,
