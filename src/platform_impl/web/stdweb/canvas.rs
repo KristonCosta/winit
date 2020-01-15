@@ -245,7 +245,9 @@ impl Canvas {
     {
         let canvas = self.raw.clone();
         self.on_touch_end = Some(self.add_event(move |event: TouchEnd| {
+            println!("Touch end triggered");
             for touch in event.changed_touches() {
+
                 let rect = canvas.get_bounding_client_rect();
                 let (left, top) = (canvas.scroll_left(), canvas.scroll_top());
                 handler(
